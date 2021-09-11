@@ -1,32 +1,26 @@
 package com.example.conferencemanager;
 
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 @SpringBootTest
 class ConferenceManagerTest {
-
 	private static Logger LOG = LoggerFactory
 			.getLogger(ConferenceManagerTest.class);
-	ConferenceManager conferenceManager;
+	private ConferenceManager conferenceManager;
+	String[] inputListOfEvents;
 
-	@Before
-	public void initConferenceManager() {
+	@BeforeEach
+	public void initConferenceManagerTest() {
+		LOG.info("Initialized test environment");
 		conferenceManager = new ConferenceManager();
-	}
-
-	@Test
-	public void testApplication() {
-		LOG.info("STARTING THE APPLICATION");
-
-		String[] input={"Writing Fast Tests Against Enterprise Rails 60min",
+		inputListOfEvents = new String[]{"Writing Fast Tests Against Enterprise Rails 60min",
 				"Overdoing it in Python 45min",
 				"Lua for the Masses 30min",
 				"Ruby Errors from Mismatched Gem Versions 45min",
@@ -45,7 +39,25 @@ class ConferenceManagerTest {
 				"Ruby on Rails Legacy App Maintenance 60min",
 				"A World Without HackerNews 30min",
 				"User Interface CSS in Rails Apps 30min"};
-		ConferenceManager.main(input);
 	}
 
+	@AfterEach
+	public void tearDown(){
+		LOG.info("Test completed");
+	}
+
+	@Test
+	public void testInputToApplication() {
+		LOG.info("Starting the test for input to Application");
+		ConferenceManager.main(inputListOfEvents);
+	}
+
+	@Test
+	public void shouldReturnParsedEvents() {
+		HashMap<String, Integer> parsedEvents = conferenceManager.parseEvents(
+				new String[]{inputListOfEvents[0],inputListOfEvents[1]}
+		);
+		assertEquals(60, parsedEvents.values().toArray()[1]);
+		assertEquals("Writing Fast Tests Against Enterprise Rails 60min", parsedEvents.keySet().toArray()[1]);
+	}
 }
