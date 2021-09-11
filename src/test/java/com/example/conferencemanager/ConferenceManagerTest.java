@@ -1,13 +1,14 @@
 package com.example.conferencemanager;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.HashMap;
-import static org.junit.Assert.assertEquals;
+import java.util.List;
 
 @SpringBootTest
 class ConferenceManagerTest {
@@ -15,6 +16,8 @@ class ConferenceManagerTest {
 			.getLogger(ConferenceManagerTest.class);
 	private ConferenceManager conferenceManager;
 	String[] inputListOfEvents;
+	HashMap<String, Integer> parsedEvents;
+	List<HashMap<String, Double>> dividedTracks;
 
 	@BeforeEach
 	public void initConferenceManagerTest() {
@@ -53,11 +56,42 @@ class ConferenceManagerTest {
 	}
 
 	@Test
-	public void shouldReturnParsedEvents() {
-		HashMap<String, Integer> parsedEvents = conferenceManager.parseEvents(
-				new String[]{inputListOfEvents[0],inputListOfEvents[1]}
-		);
-		assertEquals(60, parsedEvents.values().toArray()[1]);
-		assertEquals("Writing Fast Tests Against Enterprise Rails 60min", parsedEvents.keySet().toArray()[1]);
+	public void testApplication(){
+		HashMap<String, Integer> parsedEvents = conferenceManager.parseEvents(inputListOfEvents);
+		List<HashMap<String, Double>> dividedTracks = conferenceManager.divideIntoTracks(parsedEvents);
+		for(HashMap<String,Double> hashMap:dividedTracks){
+			for(String key:hashMap.keySet()){
+				LOG.info(hashMap.get(key)+" "+key);
+			}
+		}
+	}
+
+	@Test
+	public void testParseEvents() {
+		parseEventsForUnitTests();
+		Assertions.assertEquals(60, parsedEvents.values().toArray()[1]);
+		Assertions.assertEquals("Writing Fast Tests Against Enterprise Rails 60min", parsedEvents.keySet().toArray()[1]);
+	}
+
+	@Test
+	public void testDivideIntoTracks() {
+		parseEventsForUnitTests();
+		dividedTracks = conferenceManager.divideIntoTracks(parsedEvents);
+
+		Assertions.assertEquals(9.0, dividedTracks.get(0).values().toArray()[0]);
+		Assertions.assertEquals("Overdoing it in Python 45min", dividedTracks.get(0).keySet().toArray()[0]);
+	}
+
+	@Test
+	public void testCorrectNumberOfTrackHours() {
+		int result1 = conferenceManager.addSpeechesToTracks(0, new HashMap<>(), "a", 1);
+		int result2 = conferenceManager.addSpeechesToTracks(180, new HashMap<>(), "a", 1);
+		Assertions.assertEquals(1, result1);
+		Assertions.assertEquals(241, result2);
+	}
+
+	public void parseEventsForUnitTests(){
+		parsedEvents = conferenceManager.parseEvents(
+				new String[]{inputListOfEvents[0],inputListOfEvents[1]});
 	}
 }
