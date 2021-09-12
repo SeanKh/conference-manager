@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 @SpringBootTest
 class ConferenceManagerTest {
 	private static Logger LOG = LoggerFactory
@@ -88,6 +90,16 @@ class ConferenceManagerTest {
 		int result2 = conferenceManager.addSpeechesToTracks(180, new HashMap<>(), "a", 1);
 		Assertions.assertEquals(1, result1);
 		Assertions.assertEquals(241, result2);
+	}
+
+	@Test
+	public void testTracksWithNetworkingEvents() {
+		parseEventsForUnitTests();
+		List<HashMap<String, Double>> dividedTracks = conferenceManager.divideIntoTracks(parsedEvents);
+		List<HashMap<String, Double>> speechesWithNetworkingEvent = conferenceManager.addNetworkingEvents(dividedTracks);
+
+		assertEquals(9.0, speechesWithNetworkingEvent.get(1).values().toArray()[0]);
+		assertEquals("Writing Fast Tests Against Enterprise Rails 60min", dividedTracks.get(1).keySet().toArray()[0]);
 	}
 
 	public void parseEventsForUnitTests(){

@@ -105,4 +105,20 @@ public class ConferenceManager implements CommandLineRunner {
 		track.put(newSpeech, 9.00 + (trackHours / 60) + (trackHours % 60) * 0.01);
 		return trackHours + newSpeechDuration;
 	}
+
+	/**
+	 *	This method adds Networking event to the corresponding track
+	 * @param tracks	List of HashMap containing event description and its duration
+	 * @return	Returns updated list of HashMap, which will contain Networking event
+	 */
+	public List<HashMap<String,Double>> addNetworkingEvents(List<HashMap<String,Double>> tracks){
+		int tracksCounter=0;
+		for(HashMap<String,Double> track:tracks) {
+			int trackHours=(tracksCounter>0) ? getSecondTrackHours() : getFirstTrackHours();
+			if (420 <= trackHours && trackHours <= 560)
+				track.put("Networking Event", 9.00 + (trackHours / 60) + (trackHours % 60) * 0.01);
+			tracksCounter++;
+		}
+		return tracks;
+	}
 }
