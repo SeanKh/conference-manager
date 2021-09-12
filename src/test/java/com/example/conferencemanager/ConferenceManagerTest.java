@@ -102,6 +102,18 @@ class ConferenceManagerTest {
 		assertEquals("Writing Fast Tests Against Enterprise Rails 60min", dividedTracks.get(1).keySet().toArray()[0]);
 	}
 
+	@Test
+	public void shouldReturnSortedMapByValues() {
+		HashMap<String, Double> hashMap = new HashMap();
+		hashMap.put("3", 32.0);
+		hashMap.put("2", 23.0);
+		hashMap.put("4", 55.0);
+
+		HashMap<String, Double> sortedMap = conferenceManager.sortHashMapByValuesAscending(hashMap);
+		assertEquals("2", sortedMap.keySet().toArray()[0]);
+		assertEquals(23.0, sortedMap.values().toArray()[0]);
+	}
+
 	public void parseEventsForUnitTests(){
 		parsedEvents = conferenceManager.parseEvents(
 				new String[]{inputListOfEvents[0],inputListOfEvents[1]});

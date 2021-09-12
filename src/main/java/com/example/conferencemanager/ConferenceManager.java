@@ -6,12 +6,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @SpringBootApplication
 public class ConferenceManager implements CommandLineRunner {
 	private static Logger LOG = LoggerFactory.getLogger(ConferenceManager.class);
 	private int firstTrackHours, secondTrackHours;
+	private static DecimalFormat df = new DecimalFormat("00.00");
 
 	public int getFirstTrackHours() {
 		return firstTrackHours;
@@ -120,5 +122,65 @@ public class ConferenceManager implements CommandLineRunner {
 			tracksCounter++;
 		}
 		return tracks;
+	}
+
+	/**
+	 *  Below method prints the final list of HashMap with the event description and its duration
+	 * @param tracks	List of HashMap containing event and its duration
+	 */
+	public void printResults(List<HashMap<String,Double>> tracks){
+		int tracksCounter = 1;
+		for(HashMap<String,Double> track:tracks) {
+			LOG.info("Track "+(tracksCounter++)+":");
+			HashMap<String,Double> sortedTrack = sortHashMapByValuesAscending(track);
+			for (Map.Entry<String,Double> entry : sortedTrack.entrySet())
+				printResultAccordingToDaytime(entry.getKey(), entry.getValue());
+		}
+	}
+
+	/**
+	 *  Below method prints according to the daytime
+	 *  the final list of HashMap with the event description and its duration
+	 * @param key	Event description
+	 * @param value	Event duration
+	 */
+	public void printResultAccordingToDaytime(String key, Double value){
+		String dayTime=(value<12)?" AM ": " PM ";
+		if (value>12) value-=12;
+		LOG.info(df.format(value).replace(",", ":") + dayTime + key);
+	}
+
+	/**
+	 * This method sorts the HashMap by values in the ascending order
+	 * @param passedMap	The HashMap of event description and its duration
+	 * @return	Returns sorted LinkedHashMap of event and its duration
+	 */
+	public LinkedHashMap<String, Double> sortHashMapByValuesAscending(HashMap<String, Double> passedMap) {
+		List<String> mapKeys = new ArrayList<>(passedMap.keySet());
+		List<Double> mapValues = new ArrayList<>(passedMap.values());
+		Collections.sort(mapValues);
+		Collections.sort(mapKeys);
+
+		LinkedHashMap<String, Double> sortedMap =
+				new LinkedHashMap<>();
+
+		Iterator<Double> valueIt = mapValues.iterator();
+		while (valueIt.hasNext()) {
+			Double val = valueIt.next();
+			Iterator<String> keyIt = mapKeys.iterator();
+
+			while (keyIt.hasNext()) {
+				String key = keyIt.next();
+				Double comp1 = passedMap.get(key);
+				Double comp2 = val;
+
+				if (comp1.equals(comp2)) {
+					keyIt.remove();
+					sortedMap.put(key, val);
+					break;
+				}
+			}
+		}
+		return sortedMap;
 	}
 }
