@@ -36,9 +36,29 @@ public class ConferenceManager implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		LOG.info("EXECUTING : command line runner");
+		List<String> list=new ArrayList<>();
+		StringBuilder sentence= new StringBuilder();
 		for (int i = 0; i < args.length; ++i) {
-			LOG.info(args[i]);
+			if(args[i].contains(",")){
+				sentence.append(args[i].split(",")[0]);
+				list.add(sentence.toString());
+				sentence = new StringBuilder();
+			}
+			else{
+				sentence.append(args[i]);
+				sentence.append(" ");
+			}
 		}
+
+		list.add(sentence.toString().trim());
+		for(String s:list){
+			LOG.info(s);
+		}
+
+		HashMap<String,Integer> parsedEvents = parseEvents(list);
+		List<HashMap<String,Double>> dividedTracks = divideIntoTracks(parsedEvents);
+		List<HashMap<String,Double>> speechesWithNetworkingEvent = addNetworkingEvents(dividedTracks);
+		printResults(speechesWithNetworkingEvent);
 	}
 
 	/**
@@ -49,7 +69,7 @@ public class ConferenceManager implements CommandLineRunner {
 	 *                     to be precise the description of each event
 	 * @return	Returns the HashMap with the duration and event description
 	 */
-	public HashMap<String,Integer> parseEvents(String[] listOfEvents){
+	public HashMap<String,Integer> parseEvents(List<String> listOfEvents){
 		HashMap<String,Integer> speeches=new HashMap<>();
 		for(String event:listOfEvents){
 			if(event.endsWith("lightning")) {
