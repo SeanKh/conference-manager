@@ -13,7 +13,7 @@ Afterwards, pass the arguments and run the conferenceManager(f.e. the following 
 `./conferenceManager.sh A World Without HackerNews 30min, User Interface CSS in Rails Apps 30min`
 
 The result of above bash command can be seen in the following screenshot:
-![](../../../../../var/folders/fc/s_kg78y57mv39vv5z5mbks3h0000gn/T/TemporaryItems/NSIRD_screencaptureui_ywgFTh/Screenshot 2021-09-12 at 23.21.45.png)
+![](Screenshot-bash.png)
 
 ### Second way(using Docker)
 Either, build the docker image using below command:
@@ -29,5 +29,4 @@ Afterwards, run the created/imported docker image(f.e. the following cmd):
 `docker run --rm -it conference-manager:latest A World Without HackerNews 30min, User Interface CSS in Rails Apps 30min`
 
 The result of above Docker command can be seen in the following screenshot:
-![](../../../../../var/folders/fc/s_kg78y57mv39vv5z5mbks3h0000gn/T/TemporaryItems/NSIRD_screencaptureui_nxZLgS/Screenshot 2021-09-12 at 23.19.35.png)
-
+![](Screenshot-docker.png)
